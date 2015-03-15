@@ -1,3 +1,8 @@
+IF EXISTS(OBJECT_ID('dbo.ErrorLog'))
+BEGIN
+    DROP TABLE [dbo].[ErrorLog];
+END
+
 --Central location for handling SQL errors.
 CREATE TABLE [dbo].[ErrorLog]
 (
@@ -88,7 +93,7 @@ SELECT
     el.ErrorMessage,
     el.LogDateGMT,
     sqlXML.value('@Divisor', 'int') AS Divisor,
-    el.ParameterList,
+    el.ParameterList
 FROM dbo.ErrorLog el
     CROSS APPLY el.ParameterList.nodes('//Root/ParameterList') p(sqlXML)
 WHERE
