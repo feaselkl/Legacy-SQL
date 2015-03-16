@@ -1,4 +1,4 @@
-IF EXISTS(OBJECT_ID('dbo.ErrorLog'))
+IF (OBJECT_ID('dbo.ErrorLog') IS NOT NULL)
 BEGIN
     DROP TABLE [dbo].[ErrorLog];
 END
@@ -21,7 +21,7 @@ BEGIN
     EXEC ('CREATE PROCEDURE dbo.GetFraction AS SELECT 1 AS Stub;');
 END
 GO
- 
+
 ALTER PROCEDURE dbo.GetFraction
     @Divisor INT = 5
 AS

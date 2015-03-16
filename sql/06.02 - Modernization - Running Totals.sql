@@ -43,6 +43,7 @@ ORDER BY
     sod.SalesOrderDetailID ASC;
 
 DECLARE
+    @CurrentSalesOrderID INT = 0,
     @SalesOrderID INT,
     @SalesOrderDetailID INT,
     @LineTotal MONEY,
@@ -64,7 +65,16 @@ FETCH c INTO @SalesOrderID, @SalesOrderDetailID, @Linetotal;
 
 WHILE (@@FETCH_STATUS = 0)
 BEGIN
-    SET @RunningTotal = @RunningTotal + @LineTotal;
+    IF (@CurrentSalesOrderID <> @SalesOrderID)
+    BEGIN
+        SET @RunningTotal = @LineTotal;
+        SET @CurrentSalesOrderID = @SalesOrderID;
+    END
+    ELSE
+    BEGIN
+        SET @RunningTotal = @RunningTotal + @LineTotal;
+    END
+
     UPDATE #x
     SET RunningTotal = @RunningTotal
     WHERE

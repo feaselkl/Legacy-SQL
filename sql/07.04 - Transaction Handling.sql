@@ -9,7 +9,7 @@ ALTER PROCEDURE dbo.GetFraction
 AS
  
 DECLARE
-    @InNestedTransaction BIT;
+    @AlreadyInTransaction BIT;
  
 DECLARE
     @StartDateGMT DATETIME2(7) = SYSUTCDATETIME(),
@@ -28,11 +28,11 @@ BEGIN TRY
  
     IF ( @@TRANCOUNT > 0 )
     BEGIN
-        SET @InNestedTransaction = 1;
+        SET @AlreadyInTransaction = 1;
     END
     ELSE
     BEGIN
-        SET @InNestedTransaction = 0;
+        SET @AlreadyInTransaction = 0;
         BEGIN TRANSACTION;
     END;
  
@@ -58,13 +58,13 @@ BEGIN TRY
         @ParameterList
     );
  
-    IF ( @InNestedTransaction = 0 AND @@TRANCOUNT > 0 )
+    IF ( @AlreadyInTransaction = 0 AND @@TRANCOUNT > 0 )
     BEGIN
         COMMIT TRANSACTION;
     END;
 END TRY
 BEGIN CATCH
-    IF ( @InNestedTransaction = 0 AND @@TRANCOUNT > 0 )
+    IF ( @AlreadyInTransaction = 0 AND @@TRANCOUNT > 0 )
     BEGIN
         ROLLBACK TRANSACTION;
     END
