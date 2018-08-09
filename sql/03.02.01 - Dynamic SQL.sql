@@ -11,7 +11,7 @@ SELECT
 FROM SomeTable
 WHERE
     1 = 1' + CASE WHEN @SomeVar = 8 THEN N'
-    AND Something = 38;';
+    AND Something = 38;' ELSE N'' END;
 
     EXEC (@sql);
 END TRY

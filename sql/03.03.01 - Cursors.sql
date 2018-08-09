@@ -132,3 +132,15 @@ ORDER BY
 
 --Simple is better than complex.
 --Complex is better than complicated.
+
+--If you are using SQL Server 2017, the STRING_AGG() function makes this easy!
+SELECT
+	t1.Id,
+	t1.Value,
+	ISNULL(STRING_AGG(t2.Value, ','), '') AS Temp2Values
+FROM #Temp1 t1
+	LEFT OUTER JOIN #Temp2 t2
+		ON t1.Id = t2.Temp1Id
+GROUP BY
+	t1.Id,
+	t1.Value;
