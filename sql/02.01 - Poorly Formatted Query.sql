@@ -77,7 +77,7 @@ GROUP BY
 
 /*
 There are several formatting problems with this code.
-Let’s enumerate the problems, from top to bottom:
+Let's enumerate the problems, from top to bottom:
 
 1)  Multiple attributes on one row.  EX:  row #2 has 5 attributes.
 2)  Aliases not delimited.  You can do [Alias] = [column details],

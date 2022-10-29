@@ -26,3 +26,5 @@ FROM #SomeTable st
 GROUP BY
     st.CustomerID,
     DATEADD(HOUR, DATEDIFF(HOUR, 0, st.CreateDateLTz), 0);
+
+-- Stay tuned for a better option!

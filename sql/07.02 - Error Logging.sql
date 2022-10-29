@@ -1,3 +1,5 @@
+USE [Scratch]
+GO
 IF (OBJECT_ID('dbo.ErrorLog') IS NOT NULL)
 BEGIN
     DROP TABLE [dbo].[ErrorLog];

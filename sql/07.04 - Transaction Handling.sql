@@ -1,3 +1,5 @@
+USE [Scratch]
+GO
 IF (OBJECT_ID('dbo.GetFraction') IS NULL)
 BEGIN
     EXEC ('CREATE PROCEDURE dbo.GetFraction AS SELECT 1 AS Stub;');

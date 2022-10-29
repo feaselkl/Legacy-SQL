@@ -1,3 +1,5 @@
+USE [Scratch]
+GO
 CREATE PROCEDURE dbo.GetFraction
     @Divisor INT = 5
 AS
@@ -13,6 +15,7 @@ EXEC dbo.GetFraction
 --Now try to divide by zero
 EXEC dbo.GetFraction
     @Divisor = 0;
+GO
 
 --Problem:  where does that error go?
 --Might boil up to the application, but what if this was

@@ -1,3 +1,5 @@
+USE [Scratch]
+GO
 CREATE TABLE [dbo].[PerformanceLog]
 (
     [DatabaseName] [NVARCHAR](128) NULL,

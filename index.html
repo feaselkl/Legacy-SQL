@@ -1,0 +1,695 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Catallaxy Services | Working Effectively With Legacy SQL</title>
+
+		<link rel="stylesheet" href="../reveal.js/dist/reset.css">
+		<link rel="stylesheet" href="../reveal.js/dist/reveal.css">
+		<link rel="stylesheet" href="../reveal.js/dist/theme/black.css" id="theme">
+		<link rel="stylesheet" href="../WebsiteAssets/mods.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="../reveal.js/plugin/highlight/monokai.css" id="highlight-theme">
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h2>Working Effectively With Legacy SQL</h2>
+					
+					<a href="https://www.catallaxyservices.com">Kevin Feasel</a> (<a href="https://twitter.com/feaselkl">@feaselkl</a>)<br />
+					<a href="https://csmore.info/on/legacysql">https://csmore.info/on/legacysql</a>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Who Am I?  What Am I Doing Here?</h3>
+					<div class="container">
+						<div class="col">
+							<table class="whoami">
+								<tr>
+									<td><a href="https://csmore.info"><img src="../WebsiteAssets/Logo.png" height="100" /></a></td>
+									<td nowrap><a href="https://csmore.info">Catallaxy Services</a></td>
+								</tr>
+								<tr>
+									<td><a href="https://curatedsql.com"><img src="../WebsiteAssets/CuratedSQLLogo.png" height="100" /></a></td>
+									<td nowrap><a href="https://curatedsql.com">Curated SQL</a></td>
+								</tr>
+								<tr>
+									<td><a href="https://www.amazon.com/Finding-Ghosts-Your-Data-Techniques/dp/1484288696"><img src="../WebsiteAssets/Finding-Ghosts.jpg" height="120" /></a></td>
+									<td nowrap><a href="https://www.amazon.com/Finding-Ghosts-Your-Data-Techniques/dp/1484288696">Finding Ghosts in Your Data</a></td>
+								</tr>
+							</table>
+						</div>
+						<div class="col">
+							<a href="http://www.twitter.com/feaselkl"><img src="../WebsiteAssets/HeadShot.jpg" height="358" width="315" /></a>
+							<br />
+							<a href="http://www.twitter.com/feaselkl">@feaselkl</a>
+						</div>					
+					</div>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/skeleton-thinking.jpg" data-background-opacity="0.2">
+					<h3>What Is Legacy Code?</h3>
+					
+					<p>Neutral connotations:</p>
+					<ul>
+						<li>Code I inherited</li>
+						<li>Older code I need to maintain</li>
+					</ul>
+					<p>Negative connotations:</p>
+					<ul>
+						<li>Code without unit tests (Michael Feathers)</li>
+						<li>"Rotten" code (not well maintained)</li>
+						<li>Code stuck on an older/obsolete platform</li>
+					</ul>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/dictionary.jpg" data-background-opacity="0.2">
+					<h3>What Is Legacy Code?</h3>
+					
+					<p>
+						My working definition is "rotten" code:  code which has not been maintained very well.  This code often lacks tests, but the key characteristic is the amount of pain necessary to make changes.
+					</p>
+				</section>
+
+				<section data-background-image="presentation/assets/background/motivation.jpg" data-background-opacity="0.2">
+					<h3>Motivation</h3>
+					
+					<p>Legacy SQL will de-motivate you over time.  You will spend too much time debugging terrible procedures.  In order to fulfill even simple business requests, you will change lots of difficult code, including code you don't even know is obsolete.  Even after you leave, your successor will curse your name.</p>
+
+					<p>Older code doesn't need to be legacy code.  Older code does need TLC, however.</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+					
+					<ol>
+						<li class="active">Prerequisites</li>
+						<li>SQL Formatting</li>
+						<li>Simplify Your Code</li>
+						<li>Simplify Your Design</li>
+						<li>Remove Obsolete Code</li>
+						<li>Modernize Your Code</li>
+						<li>Improve Durability and Visibility</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/records.jpg" data-background-opacity="0.2">
+					<h3>Source Control</h3>
+					
+					<p>You <strong>need</strong> source control for your SQL code.  Source control gives you the ability safely to experiment.  If your experiment fails, roll back your changes.</p>
+					
+					<p>Use whatever source control system your developers are using, which is probably something involving Git.</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/lab.jpg" data-background-opacity="0.2">
+					<h3>Repeatble, Working Tests</h3>
+					
+					<p>Object-oriented languages have fully-featured test frameworks like NUnit to create unit tests.  Developers can break apart small sections of functionality and test those sections controlling for that code's depdendencies.</p>
+					
+					<p>T-SQL has a very limited version of database unit and integration testing.  The most popular tools for these kinds of tests are tSQLt and Visual Studio database test projects.</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+					
+					<ol>
+						<li>Prerequisites</li>
+						<li class="active">SQL Formatting</li>
+						<li>Simplify Your Code</li>
+						<li>Simplify Your Design</li>
+						<li>Remove Obsolete Code</li>
+						<li>Modernize Your Code</li>
+						<li>Improve Durability and Visibility</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/shapes.jpg" data-background-opacity="0.2">
+					<h3>Format Your SQL</h3>
+					
+					<p>Formatting SQL is the lowest-risk form of refactoring, as you aren't making any logical code changes.  If you format your SQL well, however, you can make your code more readable.  Readable code is (potentially) understandable code.</p>
+					
+					<p>Code is for humans as much as it is for compilers and interpreters!</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/package.jpg" data-background-opacity="0.2">
+					<h3>Benefits from Formatting</h3>
+					
+					<ul>
+						<li>Lower risk of bugs due to misunderstanding code</li>
+						<li>Lower risk of bugs due to forgetfulness (e.g., nested IF statements)</li>
+						<li>Faster and easier maintenance</li>
+						<li>The process helps you understand the code better</li>
+						<li>Formatting holy wars (okay, not a benefit)</li>
+					</ul>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>Consistent Casing</h3>
+					
+					<div class="container">
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							USE [master]
+							go
+							exec Sp_coNfigure
+								@configNAME = 'polybase enabled',
+								@configVALUE = 1;
+							Go
+							-- Only needed for 2019 and earlier
+							ExeC sp_configure
+								@Configname = 'hadoop connectivity',
+								@cOnfigvalue = 7;
+							gO
+							RECONFIGURE
+							GO
+							</script></code></pre>
+						</div>
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							USE [master]
+							GO
+							EXEC sp_configure
+								@configname = 'polybase enabled',
+								@configvalue = 1;
+							GO
+							-- Only needed for 2019 and earlier
+							EXEC sp_configure
+								@configname = 'hadoop connectivity',
+								@configvalue = 7;
+							GO
+							RECONFIGURE
+							GO
+							</script></code></pre>
+						</div>					
+					</div>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>Capital Letters for Keywords</h3>
+					
+					<div class="container">
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							create external table dbo.MyTable
+							(
+								SummonsNumber varchar(50),
+								PlateID varchar(120),
+								RegistrationState varchar(30),
+								PlateType varchar(50),
+								IssueDate varchar(50),
+								...
+							)
+							with
+							(
+								data_source = sqlcontrol,
+								location = 'Scratch.dbo.Table'
+							);
+							</script></code></pre>
+						</div>
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							CREATE EXTERNAL TABLE dbo.MyTable
+							(
+								SummonsNumber VARCHAR(50),
+								PlateID VARCHAR(120),
+								RegistrationState VARCHAR(30),
+								PlateType VARCHAR(50),
+								IssueDate VARCHAR(50),
+								...
+							)
+							WITH
+							(
+								DATA_SOURCE = SQLCONTROL,
+								LOCATION = 'Scratch.dbo.Table'
+							);
+							</script></code></pre>
+						</div>					
+					</div>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>Consistent Indentation Levels</h3>
+					
+					<div class="container">
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							CREATE EXTERNAL TABLE dbo.MyTable
+							(
+								SummonsNumber VARCHAR(50),
+							PlateID VARCHAR(120),
+									RegistrationState VARCHAR(30),
+								PlateType VARCHAR(50),
+									IssueDate VARCHAR(50),
+								...
+							)
+							WITH
+							(
+							DATA_SOURCE = SQLCONTROL,
+									LOCATION = 'Scratch.dbo.Table'
+							);
+							</script></code></pre>
+						</div>
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							CREATE EXTERNAL TABLE dbo.MyTable
+							(
+								SummonsNumber VARCHAR(50),
+								PlateID VARCHAR(120),
+								RegistrationState VARCHAR(30),
+								PlateType VARCHAR(50),
+								IssueDate VARCHAR(50),
+								...
+							)
+							WITH
+							(
+								DATA_SOURCE = SQLCONTROL,
+								LOCATION = 'Scratch.dbo.Table'
+							);
+							</script></code></pre>
+						</div>					
+					</div>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>One Identifier Per Line</h3>
+					
+					<div class="container">
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							SELECT
+							  ISNULL(krc.BasicID, 0) AS BasicID,
+							  krc.JDate, krc.CustomerID, krc.SearchProviderID,
+							  krc.STCategoryID,
+							  krc.EventTypeID, krc.JDate AS CreateDate,
+							  Keyword,
+							FROM SomeTable krc;
+							</script></code></pre>
+						</div>
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							SELECT
+							  ISNULL(krc.BasicID, 0) AS BasicID,
+							  krc.JDate,
+							  krc.CustomerID,
+							  krc.SearchProviderID,
+							  krc.STCategoryID,
+							  krc.EventTypeID,
+							  krc.JDate AS CreateDate,
+							  Keyword,
+							FROM SomeTable krc;
+							</script></code></pre>
+						</div>					
+					</div>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>Use Spacing to Clarify Intent</h3>
+					
+					<div class="container">
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							IF (@x=1)
+							BEGIN
+							IF(@y=2)
+							BEGIN
+							PRINT 'OK!'
+							END
+							ELSE
+							BEGIN
+							PRINT 'Uh-Oh!'
+							END
+							END
+							</script></code></pre>
+						</div>
+						<div class="col">
+							<pre><code data-trim><script type="text/template">
+							IF (@x=1)
+							BEGIN
+								IF(@y=2)
+								BEGIN
+									PRINT 'OK!'
+								END
+								ELSE
+								BEGIN
+									PRINT 'Uh-Oh!'
+								END
+							END
+							</script></code></pre>
+						</div>					
+					</div>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>Save Time with Tools</h3>
+					
+					<img src="presentation/assets/image/sqlcomplete.png" height="550" alt="ApexSQL SQL Complete" />
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+					
+					<ol>
+						<li>Prerequisites</li>
+						<li>SQL Formatting</li>
+						<li class="active">Simplify Your Code</li>
+						<li>Simplify Your Design</li>
+						<li>Remove Obsolete Code</li>
+						<li>Modernize Your Code</li>
+						<li>Improve Durability and Visibility</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/grayscale-lighthouse.jpg" data-background-opacity="0.2">
+					<h3>Simplify Your Code</h3>
+					
+					<blockquote cite="https://www.python.org/dev/peps/pep-0020/">
+						Simple is better than complex.<br />
+						Complex is better than complicated.
+					</blockquote>
+					
+					<p>A few examples of complicated code:</p>
+					<ul>
+						<li>Cursors and WHILE loops generating and executing dynamic SQL</li>
+						<li>Chains of stored procedures with temp tables holding state</li>
+						<li>Unrepeatable processes which kick off other processes which...</li>
+						<li>Deeply nested IF statements</li>
+					</ul>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>Simplify Your Code</h3>
+					
+					<p>We will now look at a series of methods to simplify code.</p>
+					<ul>
+						<li>Use the APPLY operator to simplify calculations</li>
+						<li>Use static SQL in place of dynamic SQL</li>
+						<li>Turn cursors and WHILE loops into set-based statements</li>
+						<li>Simplify filters</li>
+						<li>Simplify overall procedure design</li>
+					</ul>
+					
+					<h4>DEMO TIME!</h4>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+					
+					<ol>
+						<li>Prerequisites</li>
+						<li>SQL Formatting</li>
+						<li>Simplify Your Code</li>
+						<li class="active">Simplify Your Design</li>
+						<li>Remove Obsolete Code</li>
+						<li>Modernize Your Code</li>
+						<li>Improve Durability and Visibility</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/engineering.jpg" data-background-opacity="0.2">
+					<h3>Simplify Your Design</h3>
+					
+					<p>Once we have solid tests in place, we can look at refactoring entire designs instead of simply refactoring code within a single procedure.</p>
+					
+					<p>This type of scenario will be most common if you have nested stored procedures.  Then, treat the internal procedures as the equivalent of private methods and refactor around a contract.</p>
+					
+					<p>Retain your outward-facing procedures' input and output signatures, and focus mostly on refactoring those "private" procedures.</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/spiral-staircase.jpg" data-background-opacity="0.2">
+					<h3>Step-By-Step Process</h3>
+
+					<ol>
+						<li>Get list of affected objects</li>
+						<li>Generate high-level diagram</li>
+						<li>Document existing design</li>
+						<li>Incremental changes on paper</li>
+						<li>Collaborate:  consumers and peers</li>
+						<li>Iterate, iterate, iterate</li>
+						<li>Simplify code in the new design</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-1.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-2.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-3.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-4.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-5.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-6.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-7.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/costlog-8.png" height="650" alt="Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-1.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-2.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-3.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-4.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-5.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-6.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-7.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/background/white-wall.jpg" data-background-opacity="1.0">
+					<img src="presentation/assets/image/new-costlog-8.png" height="650" alt="Updated Cost Log" />
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+					
+					<ol>
+						<li>Prerequisites</li>
+						<li>SQL Formatting</li>
+						<li>Simplify Your Code</li>
+						<li>Simplify Your Design</li>
+						<li class="active">Remove Obsolete Code</li>
+						<li>Modernize Your Code</li>
+						<li>Improve Durability and Visibility</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/telephones.jpg" data-background-opacity="0.2">
+					<h3>Remove Obsolete Code</h3>
+					
+					<p>Code is a liability:  every line of code requires somebody to maintain it; code takes time to parse, compile, interpret, or run; and more mental overhead for developers.</p>
+					
+					<p>If that line of code is not solving a problem, get rid of it!</p>
+					
+					<p>Example:  eliminating 20% of the code base with zero effect on users</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/excavator.jpg" data-background-opacity="0.2">
+					<h3>Remove Obsolete Code</h3>
+					
+					<p>We tend to hoard code, saving things "just in case."  Instead of that, use source control and let a server hoard behind the scenes.  Be aggressive in cleaning up code in comments or which is logically impossible.</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/magnifying-glass.jpg" data-background-opacity="0.2">
+					<h3>Places to Look</h3>
+
+					<ul>
+						<li>Plan cache and procedure cache</li>
+						<li>SQL Agent jobs</li>
+						<li>Searches in source control</li>
+						<li>SSIS packages</li>
+						<li>sys.sql_modules</li>
+					</ul>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+					
+					<ol>
+						<li>Prerequisites</li>
+						<li>SQL Formatting</li>
+						<li>Simplify Your Code</li>
+						<li>Simplify Your Design</li>
+						<li>Remove Obsolete Code</li>
+						<li class="active">Modernize Your Code</li>
+						<li>Improve Durability and Visibility</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/small-cat.jpg" data-background-opacity="0.8">
+					<h3>Modernization on the Small</h3>
+					
+					<p>Don't forget to take advantage of new functionality in SQL Server:  window functions instead of cursors for running totals, data types like DATE, and functions like CONCAT to put together strings.</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/space.jpg" data-background-opacity="0.4">
+					<h3>Modernization on the Large</h3>
+					
+					<ul>
+						<li>Review no-longer-relevant hardware constraints</li>
+						<li>Review prior architectural decisions</li>
+						<li>You've probably learned a lot since you wrote that code</li>
+						<li>Review data requirements which have changed</li>
+					</ul>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" data-background-opacity="0.4">
+					<h3>Agenda</h3>
+					
+					<ol>
+						<li>Prerequisites</li>
+						<li>SQL Formatting</li>
+						<li>Simplify Your Code</li>
+						<li>Simplify Your Design</li>
+						<li>Remove Obsolete Code</li>
+						<li>Modernize Your Code</li>
+						<li class="active">Improve Durability and Visibility</li>
+					</ol>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/chain.jpg" data-background-opacity="0.2">
+					<h3>Improve Durability and Visibility</h3>
+					
+					<ul>
+						<li>Use TRY-CATCH to perform error handling</li>
+						<li>Log database errors as they happen</li>
+						<li>(Maybe) log metrics for queries<li>
+						<li>Handle explicit transactions in a consistent manner</li>
+					</ul>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/demo.jpg" data-background-opacity="0.2">
+					<h3>Demo Time</h3>
+				</section>
+				
+				<section data-background-image="presentation/assets/image/Bubbles.jpg" height="650" data-background-opacity="0.4">
+					<h3>Improve Durability and Visibility</h3>
+					
+					<p>The net result from these changes is:</p>
+					
+					<ul>
+						<li>Lots more code (mostly boilerplate and approximately fixed cost)</li>
+						<li>Appropriate error handling and logging</li>
+						<li>Visibility into performance metrics <strong>by parameter selection</strong></li>
+						<li>Transaction handling</li>
+					</ul>
+				</section>
+
+				<section data-background-image="presentation/assets/background/wrappingup.jpg" data-background-opacity="0.2">
+					<h3>Wrapping Up</h3>
+					
+					<p>Legacy code is painful.  Get tests in place and refactor that code.</p>
+					
+					<p>Also, be sure you are keeping up on major changes in T-SQL as you upgrade to newer versions of SQL Server.</p>
+				</section>
+				
+				<section data-background-image="presentation/assets/background/wrappingup.jpg" data-background-opacity="0.2">
+					<h3>Wrapping Up</h3>
+					
+					<p>
+						To learn more, go here:
+						<br />
+						<a href="https://csmore.info/on/legacysql">https://csmore.info/on/legacysql</a>
+					</p>
+					<br />
+					<p>
+						And for help, contact me:
+						<br />
+						<a href="mailto:feasel@catallaxyservices.com">feasel@catallaxyservices.com</a> | <a href="https://www.twitter.com/feaselkl">@feaselkl</a>
+					</p>
+					<br />
+					<p>
+						Catallaxy Services consulting:
+						<br />
+						<a href="https://csmore.info/contact">https://CSmore.info/on/contact</a>
+					</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="../reveal.js/dist/reveal.js"></script>
+		<script src="../reveal.js/plugin/zoom/zoom.js"></script>
+		<script src="../reveal.js/plugin/notes/notes.js"></script>
+		<script src="../reveal.js/plugin/search/search.js"></script>
+		<script src="../reveal.js/plugin/markdown/markdown.js"></script>
+		<script src="../reveal.js/plugin/math/math.js"></script>
+		<script src="../reveal.js/plugin/menu/menu.js"></script>
+		<script src="../reveal.js/plugin/highlight/highlight.js"></script>
+		<script src="../reveal.js/plugin/chart/Chart.min.js"></script>
+		<script src="../reveal.js/plugin/chart/plugin.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				width: '70%',
+				controls: true,
+				progress: true,
+				center: true,
+				hash: true,
+				transition: 'fade',
+				
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealZoom, RevealNotes, RevealSearch, RevealMarkdown, RevealHighlight, RevealMath, RevealMenu, RevealChart ]
+			});
+		</script>
+	</body>
+</html>
